@@ -11,6 +11,14 @@ export interface BashArgs {
     description?: string;
 }
 
+export interface CallMcpToolArgs {
+    app_id: string;
+    tool_name: string;
+    arguments: {
+        [k: string]: unknown;
+        };
+}
+
 export interface ConnectIntegrationArgs {
     app_slug: string;
 }
@@ -331,6 +339,11 @@ export interface MapsSearchArgs {
     region?: string;
 }
 
+export interface OpenMcpAppArgs {
+    server_name: string;
+    tool_name: string;
+}
+
 export interface OpenWebpageArgs {
     url: string;
 }
@@ -645,7 +658,7 @@ export interface XSearchArgs {
     enable_video_understanding?: boolean;
 }
 
-export const TOOL_NAMES = ["bash", "connect_integration", "connect_telegram", "copy_file", "create_agent", "create_automation", "create_persona", "create_rule", "create_website", "delete_agent", "delete_automation", "delete_persona", "delete_rule", "delete_space_asset", "delete_space_route", "delete_user_service", "edit_agent", "edit_automation", "edit_file", "edit_file_llm", "edit_image", "edit_persona", "edit_rule", "edit_space_route", "find_similar_links", "generate_d2_diagram", "generate_image", "generate_speech", "generate_video", "get_automation", "get_space_errors", "get_space_route", "get_space_route_history", "get_space_settings", "grep_search", "image_search", "list_agents", "list_app_tools", "list_automations", "list_available_scopes", "list_directory", "list_personas", "list_rules", "list_space_assets", "list_space_routes", "list_user_services", "maps_search", "open_webpage", "proxy_local_service", "publish_site", "read_file", "read_webpage", "redo_space_route", "register_user_service", "restart_space_server", "save_webpage", "search_app_catalog", "send_email_to_user", "send_sms_to_user", "service_doctor", "set_active_persona", "set_persona_scopes", "tool_docs", "transcribe_audio", "transcribe_video", "undo_space_route", "unpublish_site", "update_space_asset", "update_space_settings", "update_user_service", "update_user_settings", "use_app_gmail", "use_webpage", "view_webpage", "web_research", "web_search", "write_file", "write_space_route", "x_search"] as const;
+export const TOOL_NAMES = ["bash", "call_mcp_tool", "connect_integration", "connect_telegram", "copy_file", "create_agent", "create_automation", "create_persona", "create_rule", "create_website", "delete_agent", "delete_automation", "delete_persona", "delete_rule", "delete_space_asset", "delete_space_route", "delete_user_service", "edit_agent", "edit_automation", "edit_file", "edit_file_llm", "edit_image", "edit_persona", "edit_rule", "edit_space_route", "find_similar_links", "generate_d2_diagram", "generate_image", "generate_speech", "generate_video", "get_automation", "get_space_errors", "get_space_route", "get_space_route_history", "get_space_settings", "grep_search", "image_search", "list_agents", "list_app_tools", "list_automations", "list_available_scopes", "list_directory", "list_personas", "list_rules", "list_space_assets", "list_space_routes", "list_user_services", "maps_search", "open_mcp_app", "open_webpage", "proxy_local_service", "publish_site", "read_file", "read_webpage", "redo_space_route", "register_user_service", "restart_space_server", "save_webpage", "search_app_catalog", "send_email_to_user", "send_sms_to_user", "service_doctor", "set_active_persona", "set_persona_scopes", "tool_docs", "transcribe_audio", "transcribe_video", "undo_space_route", "unpublish_site", "update_space_asset", "update_space_settings", "update_user_service", "update_user_settings", "use_app_gmail", "use_webpage", "view_webpage", "web_research", "web_search", "write_file", "write_space_route", "x_search"] as const;
 
 /**
  * Typed convenience methods for every tool Zo Computer exposes over MCP.
@@ -658,6 +671,14 @@ export class ZoComputerClient extends McpClientBase {
      */
     bash(args: BashArgs): Promise<McpToolResult> {
         return this.callTool("bash", args);
+    }
+
+    /**
+     * Call a server tool through an open MCP App.
+     * Docs: https://docs.zocomputer.com/tools/call-mcp-tool.md
+     */
+    callMcpTool(args: CallMcpToolArgs): Promise<McpToolResult> {
+        return this.callTool("call_mcp_tool", args);
     }
 
     /**
@@ -1132,6 +1153,14 @@ export class ZoComputerClient extends McpClientBase {
      */
     mapsSearch(args: MapsSearchArgs): Promise<McpToolResult> {
         return this.callTool("maps_search", args);
+    }
+
+    /**
+     * Open an interactive MCP App inside web chat.
+     * Docs: https://docs.zocomputer.com/tools/open-mcp-app.md
+     */
+    openMcpApp(args: OpenMcpAppArgs): Promise<McpToolResult> {
+        return this.callTool("open_mcp_app", args);
     }
 
     /**
