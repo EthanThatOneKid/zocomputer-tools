@@ -7,6 +7,7 @@
 // (typically snake_case) to camelCase method identifiers.
 
 import { compile, type JSONSchema } from 'json-schema-to-typescript';
+import type { ToolDefinition } from './emitter.js';
 
 const COMPILE_OPTIONS = {
   bannerComment: '',
@@ -73,4 +74,55 @@ function splitCamelWords(segment: string): string[] {
 
 function isAcronym(word: string): boolean {
   return word.length > 1 && word === word.toUpperCase() && /[A-Z]/.test(word);
+}
+
+/**
+ * Canonical JSON object key order for MCP tool definitions. Arrays keep
+ * their order (JSON array order is meaningful); object keys are rewritten
+ * in this order first, with any unknown keys following alphabetically.
+ */
+const TOOL_KEY_ORDER = ['name', 'description', 'inputSchema', 'outputSchema'] as const;
+const SCHEMA_KEY_ORDER = ['type', 'description', 'enum', 'anyOf', 'oneOf', 'allOf', 'items', 'properties', 'required', 'additionalProperties'] as const;
+
+/**
+ * Recursively rebuilds a JSON value with object keys in a stable order:
+ * keys listed in `keyOrder` first (in that order), then any unrecognized
+ * keys alphabetically. Property order inside a schema object is normalized
+ * alphabetically — it carries no meaning in JSON Schema.
+ *
+ * Upstream MCP servers may return object keys in a different order per
+ * request; without this normalization those permutations would show up
+ * as snapshot churn even though the tool definitions are unchanged.
+ */
+export function canonicalKeyOrder(value: unknown, keyOrder: readonly string[] = SCHEMA_KEY_ORDER): unknown {
+  if (Array.isArray(value)) return value.map((item) => canonicalKeyOrder(item, keyOrder));
+  if (value && typeof value === 'object') {
+    const entries = new Map(Object.entries(value as Record<string, unknown>));
+    const out: Record<string, unknown> = {};
+    const emit = (key: string) => {
+      if (!entries.has(key)) return;
+      out[key] = canonicalKeyOrder(entries.get(key), SCHEMA_KEY_ORDER);
+      entries.delete(key);
+    };
+    for (const key of keyOrder) emit(key);
+    for (const key of [...entries.keys()].sort()) emit(key);
+    return out;
+  }
+  return value;
+}
+
+/**
+ * Canonical tool ordering: sorted by `name` (the emitter already assumes
+ * order-independence; this pins the snapshot itself to that order).
+ */
+export function canonicalToolOrder(tools: ToolDefinition[]): ToolDefinition[] {
+  return [...tools].sort((a, b) => a.name.localeCompare(b.name));
+}
+
+/**
+ * Fully canonical form of a tool inventory for snapshotting: sorted by
+ * tool name, with nested object keys in a stable order.
+ */
+export function canonicalizeTools(tools: ToolDefinition[]): ToolDefinition[] {
+  return canonicalToolOrder(tools.map((tool) => canonicalKeyOrder(tool, TOOL_KEY_ORDER) as ToolDefinition));
 }
