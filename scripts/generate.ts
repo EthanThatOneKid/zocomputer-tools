@@ -3,7 +3,7 @@
 //   ZO_API_KEY=... npm run sync:mcp
 //
 // Fetches tools/list from https://api.zo.computer/mcp (or ZO_MCP_URL), writes
-// a raw snapshot to openapi/mcp-tools.json and the typed client to
+// a canonicalized snapshot to openapi/mcp-tools.json and the typed client to
 // src/tools.gen.ts. Without credentials the script falls back to the
 // checked-in snapshot so `npm run check` stays green in CI.
 
@@ -12,6 +12,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { DEFAULT_BASE_URL } from '@/client.js';
 import { emitToolsModule, type ToolDefinition } from './emitter.js';
+import { canonicalizeTools } from './lib.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, '..');
@@ -81,7 +82,9 @@ async function readSnapshotTools(): Promise<ToolDefinition[]> {
   if (!Array.isArray(raw.tools) || raw.tools.length === 0) {
     throw new Error('snapshot has no tools');
   }
-  return raw.tools;
+  // Snapshot order is irrelevant to codegen (the emitter sorts internally);
+  // canonicalizing here keeps the regenerated client identical either way.
+  return canonicalizeTools(raw.tools);
 }
 
 let tools: ToolDefinition[];
@@ -89,6 +92,10 @@ try {
   if (!TOKEN) throw new Error('no ZO_API_KEY / ZO_CLIENT_IDENTITY_TOKEN set');
   console.log(`Fetching tools/list from ${BASE_URL}...`);
   tools = await fetchLiveTools();
+  // The MCP server returns tools (and their schema keys) in an arbitrary
+  // order per request; canonicalize before writing so the nightly diff only
+  // reflects real tool-definition changes, not response-order churn.
+  tools = canonicalizeTools(tools);
   await writeFile(SNAPSHOT_PATH, JSON.stringify({ tools }, null, 2) + '\n', 'utf8');
   console.log(`Fetched ${tools.length} tools; snapshot updated.`);
 } catch (err) {

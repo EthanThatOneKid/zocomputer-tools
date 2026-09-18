@@ -5,18 +5,18 @@ import { McpClientBase } from "./client.js";
 import type { McpToolResult } from "./client.js";
 
 export interface BashArgs {
+    description?: string;
     cmd: string;
     cwd?: string;
     timeout?: number;
-    description?: string;
 }
 
 export interface CallMcpToolArgs {
     app_id: string;
-    tool_name: string;
     arguments: {
         [k: string]: unknown;
         };
+    tool_name: string;
 }
 
 export interface ConnectIntegrationArgs {
@@ -27,42 +27,42 @@ export interface ConnectTelegramArgs {
 }
 
 export interface CopyFileArgs {
-    source_path: string;
     dest_path: string;
+    source_path: string;
 }
 
 export interface CreateAgentArgs {
-    rrule: string;
-    instruction: string;
     delivery_method?: "email" | "sms" | "telegram" | "slack" | "discord" | "";
+    instruction: string;
     model?: string;
+    rrule: string;
 }
 
 export interface CreateAutomationArgs {
-    rrule: string;
-    instruction: string;
     delivery_method?: "email" | "sms" | "telegram" | "slack" | "discord" | "";
+    instruction: string;
     model?: string;
+    rrule: string;
 }
 
 export interface CreatePersonaArgs {
-    name: string;
-    prompt: string;
     image?: string;
     image_hue?: number;
     model?: string;
+    name: string;
+    prompt: string;
 }
 
 export interface CreateRuleArgs {
-    instruction: string;
     condition?: string;
+    instruction: string;
 }
 
 export interface CreateWebsiteArgs {
-    name: string;
-    variant?: "blank" | "blog" | "event" | "slides" | "data" | "marketing" | "portfolio" | "kb" | "waitlist" | "storefront";
-    parent_path_parts?: string[];
     force?: boolean;
+    name: string;
+    parent_path_parts?: string[];
+    variant?: "blank" | "blog" | "event" | "slides" | "data" | "marketing" | "portfolio" | "kb" | "waitlist" | "storefront";
 }
 
 export interface DeleteAgentArgs {
@@ -100,64 +100,52 @@ export interface DeleteUserServiceArgs {
 }
 
 export interface EditAgentArgs {
-    automation_id: string;
-    instruction?: string;
-    rrule?: string;
-    delivery_method?: "email" | "sms" | "telegram" | "slack" | "discord" | "none" | "";
-    model?: string;
     active?: "true" | "false" | "";
+    automation_id: string;
+    delivery_method?: "email" | "sms" | "telegram" | "slack" | "discord" | "none" | "";
+    instruction?: string;
+    model?: string;
+    rrule?: string;
 }
 
 export interface EditAutomationArgs {
-    automation_id: string;
-    instruction?: string;
-    rrule?: string;
-    delivery_method?: "email" | "sms" | "telegram" | "slack" | "discord" | "none" | "";
-    model?: string;
     active?: "true" | "false" | "";
+    automation_id: string;
+    delivery_method?: "email" | "sms" | "telegram" | "slack" | "discord" | "none" | "";
+    instruction?: string;
+    model?: string;
+    rrule?: string;
 }
 
 export interface EditFileArgs {
-    target_file: string;
     operations: {
         [k: string]: unknown;
         }[];
+    target_file: string;
 }
 
 export interface EditFileLlmArgs {
-    target_file: string;
     code_edit: string;
     instructions?: string;
+    target_file: string;
 }
 
 export interface EditImageArgs {
-    prompt: string;
-    filepaths?: string[] | null;
-    file_suffix?: string;
-    provider?: "" | "openai" | "google";
-    model?: string;
-    source_filepath?: string;
-    reference_filepaths?: string[] | null;
-    mask_filepath?: string;
     aspect_ratio?: "21:9" | "16:9" | "4:3" | "3:2" | "8:1" | "4:1" | "1:1" | "9:16" | "3:4" | "2:3" | "1:4" | "1:8" | "5:4" | "4:5";
-    quality?: string;
+    file_suffix?: string;
+    filepaths?: string[] | null;
+    mask_filepath?: string;
+    model?: string;
     n?: number;
+    prompt: string;
+    provider?: "" | "openai" | "google";
+    quality?: string;
+    reference_filepaths?: string[] | null;
     size?: string;
+    source_filepath?: string;
 }
 
 export interface EditPersonaArgs {
-    /**
-     * Identifier of the persona to update.
-     */
-    persona_id: string;
-    /**
-     * New display name, if renaming.
-     */
-    name?: string;
-    /**
-     * Edit to apply to the prompt. Provide only the changed sections, with '// ... existing content ...' placeholders for unchanged parts. Merged into the existing prompt via LLM. Strongly prefer additive edits.
-     */
-    prompt_edit?: string;
     /**
      * One short sentence describing what the edit does. Used with prompt_edit.
      */
@@ -174,19 +162,27 @@ export interface EditPersonaArgs {
      * AI model ID for the persona, if updating.
      */
     model?: string;
+    /**
+     * New display name, if renaming.
+     */
+    name?: string;
+    /**
+     * Identifier of the persona to update.
+     */
+    persona_id: string;
+    /**
+     * Edit to apply to the prompt. Provide only the changed sections, with '// ... existing content ...' placeholders for unchanged parts. Merged into the existing prompt via LLM. Strongly prefer additive edits.
+     */
+    prompt_edit?: string;
 }
 
 export interface EditRuleArgs {
-    rule_id: string;
-    instruction?: string;
     condition?: string;
+    instruction?: string;
+    rule_id: string;
 }
 
 export interface EditSpaceRouteArgs {
-    /**
-     * Route path of the existing route to edit, e.g. '/about' or '/api/hello'.
-     */
-    path: string;
     /**
      * Partial edit — only the changed sections, with '// ... existing code ...' placeholders for unchanged parts. Merged against the current route code.
      */
@@ -196,16 +192,20 @@ export interface EditSpaceRouteArgs {
      */
     edit_instructions?: string;
     /**
+     * Route path of the existing route to edit, e.g. '/about' or '/api/hello'.
+     */
+    path: string;
+    /**
      * 'true' or 'false'. Optional visibility override for page routes. Leave empty to preserve current visibility. API routes are always public.
      */
     public?: string;
 }
 
 export interface FindSimilarLinksArgs {
-    url: string;
-    include_domains?: string[];
     exclude_domains?: string[];
     exclude_source_domain?: boolean;
+    include_domains?: string[];
+    url: string;
 }
 
 export interface GenerateD2DiagramArgs {
@@ -215,44 +215,44 @@ export interface GenerateD2DiagramArgs {
 }
 
 export interface GenerateImageArgs {
-    prompt: string;
+    aspect_ratio?: "21:9" | "16:9" | "4:3" | "3:2" | "8:1" | "4:1" | "1:1" | "9:16" | "3:4" | "2:3" | "1:4" | "1:8" | "5:4" | "4:5";
     file_stem: string;
+    model?: string;
     n?: number;
     output_dir?: string;
-    aspect_ratio?: "21:9" | "16:9" | "4:3" | "3:2" | "8:1" | "4:1" | "1:1" | "9:16" | "3:4" | "2:3" | "1:4" | "1:8" | "5:4" | "4:5";
+    prompt: string;
     provider?: "" | "openai" | "google";
-    model?: string;
-    reference_filepaths?: string[] | null;
     quality?: string;
+    reference_filepaths?: string[] | null;
     size?: string;
 }
 
 export interface GenerateSpeechArgs {
-    text: string;
     file_stem: string;
-    output_dir?: string;
-    voice?: "ara" | "eve" | "leo" | "rex" | "sal";
     format?: "mp3" | "wav";
-    language?: string;
-    speed?: number;
     instructions?: string;
+    language?: string;
     model?: string;
+    output_dir?: string;
+    speed?: number;
+    text: string;
+    voice?: "ara" | "eve" | "leo" | "rex" | "sal";
     voice_sample_path?: string;
 }
 
 export interface GenerateVideoArgs {
-    instruction: string;
-    filepath?: string;
-    file_suffix?: string;
-    orientation?: "landscape" | "portrait";
-    model?: string;
-    end_frame_path?: string;
-    duration_seconds?: number;
     aspect_ratio?: "" | "1:1" | "16:9" | "9:16" | "4:3" | "3:4" | "3:2" | "2:3";
-    resolution?: string;
-    generate_audio?: "auto" | "on" | "off";
-    output_dir?: string;
+    duration_seconds?: number;
+    end_frame_path?: string;
     file_stem?: string;
+    file_suffix?: string;
+    filepath?: string;
+    generate_audio?: "auto" | "on" | "off";
+    instruction: string;
+    model?: string;
+    orientation?: "landscape" | "portrait";
+    output_dir?: string;
+    resolution?: string;
 }
 
 export interface GetAutomationArgs {
@@ -280,11 +280,11 @@ export interface GetSpaceSettingsArgs {
 }
 
 export interface GrepSearchArgs {
-    query: string;
-    location?: string;
     case_sensitive?: boolean;
     exclude_pattern?: string;
     include_pattern?: string;
+    location?: string;
+    query: string;
     search_kind?: string;
 }
 
@@ -306,8 +306,8 @@ export interface ListAvailableScopesArgs {
 }
 
 export interface ListDirectoryArgs {
-    path: string;
     ignore?: string[];
+    path: string;
 }
 
 export interface ListPersonasArgs {
@@ -326,16 +326,16 @@ export interface ListUserServicesArgs {
 }
 
 export interface MapsSearchArgs {
+    included_type?: string;
+    language?: string;
+    location?: string;
+    min_rating?: number;
+    open_now?: "true" | "false" | "";
+    price_level?: string;
     /**
      * Natural language prompt describing what to find on Google Maps.
      */
     query: string;
-    location?: string;
-    open_now?: "true" | "false" | "";
-    min_rating?: number;
-    included_type?: string;
-    price_level?: string;
-    language?: string;
     region?: string;
 }
 
@@ -353,18 +353,18 @@ export interface ProxyLocalServiceArgs {
 }
 
 export interface PublishSiteArgs {
-    site_path: string;
     public?: "true" | "false" | "";
+    site_path: string;
 }
 
 export interface ReadFileArgs {
-    target_file: string;
-    start_line?: number;
     end_line?: number;
-    read_entire_file?: boolean;
-    pdf_epub_start_page_1_indexed?: number;
     pdf_epub_end_page_1_indexed_inclusive?: number;
     pdf_epub_include_images?: boolean;
+    pdf_epub_start_page_1_indexed?: number;
+    read_entire_file?: boolean;
+    start_line?: number;
+    target_file: string;
 }
 
 export interface ReadWebpageArgs {
@@ -380,15 +380,15 @@ export interface RedoSpaceRouteArgs {
 }
 
 export interface RegisterUserServiceArgs {
-    label: string;
-    mode: "http" | "tcp" | "process";
-    local_port?: number;
     entrypoint?: string;
-    workdir?: string;
     env_vars?: {
         [k: string]: unknown;
         };
+    label: string;
+    local_port?: number;
+    mode: "http" | "tcp" | "process";
     public?: "true" | "false" | "";
+    workdir?: string;
 }
 
 export interface RestartSpaceServerArgs {
@@ -404,32 +404,32 @@ export interface SearchAppCatalogArgs {
 
 export interface SendEmailToUserArgs {
     /**
-     * Email subject line. Must be non-empty.
+     * Absolute file paths to attach (total size <= 10MB).
      */
-    subject: string;
+    attachments?: string[];
     /**
      * Email body in Markdown. May be empty when attachments are provided.
      */
     markdown_body: string;
     /**
-     * Absolute file paths to attach (total size <= 10MB).
+     * Email subject line. Must be non-empty.
      */
-    attachments?: string[];
+    subject: string;
 }
 
 export interface SendSmsToUserArgs {
     /**
-     * The text content. May be empty when media_files is provided.
+     * Name of a registered contact. If omitted, sends to the user.
      */
-    message: string;
+    contact_name?: string;
     /**
      * Absolute file paths to send as MMS attachments.
      */
     media_files?: string[];
     /**
-     * Name of a registered contact. If omitted, sends to the user.
+     * The text content. May be empty when media_files is provided.
      */
-    contact_name?: string;
+    message: string;
 }
 
 export interface ServiceDoctorArgs {
@@ -476,74 +476,74 @@ export interface UnpublishSiteArgs {
 
 export interface UpdateSpaceAssetArgs {
     /**
-     * Path to the source file in the workspace, e.g. '/home/workspace/images/logo.png'.
-     */
-    source_file: string;
-    /**
      * URL path where the asset will be served, starting with '/', e.g. '/images/logo.png'.
      */
     asset_path: string;
+    /**
+     * Path to the source file in the workspace, e.g. '/home/workspace/images/logo.png'.
+     */
+    source_file: string;
 }
 
 export interface UpdateSpaceSettingsArgs {
     /**
-     * Empty string for space-global settings (default), or a route
+     * AT Protocol DID for domain verification. Space-global only.
      */
-    path?: string;
-    /**
-     * Title override. Pass "default" to reset/clear.
-     */
-    site_title?: string;
-    /**
-     * Meta description. Pass "default" to reset/clear.
-     */
-    site_description?: string;
-    /**
-     * Asset path for OG image (e.g. "/assets/og.png"). Must
-     */
-    og_image_url?: string;
-    /**
-     * Asset path for favicon. Space-global only.
-     */
-    favicon_url?: string;
-    /**
-     * HTML injected into <head>. Space-global only.
-     */
-    custom_head_html?: string;
-    /**
-     * Custom robots.txt content. Space-global only.
-     */
-    robots_txt?: string;
-    /**
-     * "true" adds noindex/nofollow; "false" removes it; "default"
-     */
-    noindex?: "true" | "false" | "default" | "";
+    atproto_did?: string;
     /**
      * Route path for custom 404 page. Space-global only.
      */
     custom_404_route?: string;
     /**
+     * HTML injected into <head>. Space-global only.
+     */
+    custom_head_html?: string;
+    /**
+     * Asset path for favicon. Space-global only.
+     */
+    favicon_url?: string;
+    /**
      * HTML lang attribute value. Space-global only.
      */
     lang?: string;
     /**
-     * AT Protocol DID for domain verification. Space-global only.
+     * "true" adds noindex/nofollow; "false" removes it; "default"
      */
-    atproto_did?: string;
+    noindex?: "true" | "false" | "default" | "";
+    /**
+     * Asset path for OG image (e.g. "/assets/og.png"). Must
+     */
+    og_image_url?: string;
+    /**
+     * Empty string for space-global settings (default), or a route
+     */
+    path?: string;
+    /**
+     * Custom robots.txt content. Space-global only.
+     */
+    robots_txt?: string;
+    /**
+     * Meta description. Pass "default" to reset/clear.
+     */
+    site_description?: string;
+    /**
+     * Title override. Pass "default" to reset/clear.
+     */
+    site_title?: string;
 }
 
 export interface UpdateUserServiceArgs {
-    service_id: string;
-    label?: string;
-    mode?: "http" | "tcp" | "process" | "";
-    local_port?: number;
+    enabled?: "true" | "false" | "";
     entrypoint?: string;
-    workdir?: string;
     env_vars?: {
         [k: string]: unknown;
         };
+    label?: string;
+    local_port?: number;
+    mode?: "http" | "tcp" | "process" | "";
     public?: "true" | "false" | "";
-    enabled?: "true" | "false" | "";
+    service_id: string;
+    workdir?: string;
 }
 
 export interface UpdateUserSettingsArgs {
@@ -552,16 +552,15 @@ export interface UpdateUserSettingsArgs {
 }
 
 export interface UseAppGmailArgs {
-    tool_name: string;
     configured_props: {
         [k: string]: unknown;
         };
     download_path?: string;
     email?: string;
+    tool_name: string;
 }
 
 export interface UseWebpageArgs {
-    task: string;
     /**
      * Flat JSON-Schema-shaped grammar for a tool `output_schema` param.
      */
@@ -599,63 +598,64 @@ export interface UseWebpageArgs {
         };
         required?: string[];
         };
+    task: string;
 }
 
 export interface ViewWebpageArgs {
 }
 
 export interface WebResearchArgs {
+    category?: string;
+    exclude_domains?: string[];
+    include_domains?: string[];
+    include_text?: string[];
     query: string;
     time_range?: string;
-    category?: string;
-    include_domains?: string[];
-    exclude_domains?: string[];
-    include_text?: string[];
 }
 
 export interface WebSearchArgs {
+    include_domains?: string[];
     query: string;
     time_range?: string;
-    include_domains?: string[];
     topic?: string;
 }
 
 export interface WriteFileArgs {
-    target_file: string;
     content?: string;
+    target_file: string;
 }
 
 export interface WriteSpaceRouteArgs {
-    /**
-     * Route path starting with '/'. Use '/' for custom home page. Any path works for either route type.
-     */
-    path: string;
-    /**
-     * Either 'api' or 'page'.
-     */
-    route_type: "api" | "page";
     /**
      * Full source code for the route. Required — must be valid TypeScript/TSX with a default export.
      */
     code?: string;
     /**
+     * Route path starting with '/'. Use '/' for custom home page. Any path works for either route type.
+     */
+    path: string;
+    /**
      * 'true' or 'false'. Whether the route is publicly accessible. API routes are always public (this param is ignored). For pages, leave empty to preserve current visibility on updates; defaults to false for new non-homepage pages and true for the homepage (/).
      */
     public?: string;
+    /**
+     * Either 'api' or 'page'.
+     */
+    route_type: "api" | "page";
 }
 
 export interface XSearchArgs {
+    allowed_x_handles?: string[];
+    enable_image_understanding?: boolean;
+    enable_video_understanding?: boolean;
+    excluded_x_handles?: string[];
+    from_date?: string;
     /**
      * Natural language prompt describing what to find on X.
      */
     query: string;
-    allowed_x_handles?: string[];
-    excluded_x_handles?: string[];
     time_range?: string;
-    from_date?: string;
     to_date?: string;
-    enable_image_understanding?: boolean;
-    enable_video_understanding?: boolean;
 }
 
 export const TOOL_NAMES = ["bash", "call_mcp_tool", "connect_integration", "connect_telegram", "copy_file", "create_agent", "create_automation", "create_persona", "create_rule", "create_website", "delete_agent", "delete_automation", "delete_persona", "delete_rule", "delete_space_asset", "delete_space_route", "delete_user_service", "edit_agent", "edit_automation", "edit_file", "edit_file_llm", "edit_image", "edit_persona", "edit_rule", "edit_space_route", "find_similar_links", "generate_d2_diagram", "generate_image", "generate_speech", "generate_video", "get_automation", "get_space_errors", "get_space_route", "get_space_route_history", "get_space_settings", "grep_search", "image_search", "list_agents", "list_app_tools", "list_automations", "list_available_scopes", "list_directory", "list_personas", "list_rules", "list_space_assets", "list_space_routes", "list_user_services", "maps_search", "open_mcp_app", "open_webpage", "proxy_local_service", "publish_site", "read_file", "read_webpage", "redo_space_route", "register_user_service", "restart_space_server", "save_webpage", "search_app_catalog", "send_email_to_user", "send_sms_to_user", "service_doctor", "set_active_persona", "set_persona_scopes", "tool_docs", "transcribe_audio", "transcribe_video", "undo_space_route", "unpublish_site", "update_space_asset", "update_space_settings", "update_user_service", "update_user_settings", "use_app_gmail", "use_webpage", "view_webpage", "web_research", "web_search", "write_file", "write_space_route", "x_search"] as const;
