@@ -124,12 +124,6 @@ export interface EditFileArgs {
     target_file: string;
 }
 
-export interface EditFileLlmArgs {
-    code_edit: string;
-    instructions?: string;
-    target_file: string;
-}
-
 export interface EditImageArgs {
     aspect_ratio?: "21:9" | "16:9" | "4:3" | "3:2" | "8:1" | "4:1" | "1:1" | "9:16" | "3:4" | "2:3" | "1:4" | "1:8" | "5:4" | "4:5";
     file_suffix?: string;
@@ -658,7 +652,7 @@ export interface XSearchArgs {
     to_date?: string;
 }
 
-export const TOOL_NAMES = ["bash", "call_mcp_tool", "connect_integration", "connect_telegram", "copy_file", "create_agent", "create_automation", "create_persona", "create_rule", "create_website", "delete_agent", "delete_automation", "delete_persona", "delete_rule", "delete_space_asset", "delete_space_route", "delete_user_service", "edit_agent", "edit_automation", "edit_file", "edit_file_llm", "edit_image", "edit_persona", "edit_rule", "edit_space_route", "find_similar_links", "generate_d2_diagram", "generate_image", "generate_speech", "generate_video", "get_automation", "get_space_errors", "get_space_route", "get_space_route_history", "get_space_settings", "grep_search", "image_search", "list_agents", "list_app_tools", "list_automations", "list_available_scopes", "list_directory", "list_personas", "list_rules", "list_space_assets", "list_space_routes", "list_user_services", "maps_search", "open_mcp_app", "open_webpage", "proxy_local_service", "publish_site", "read_file", "read_webpage", "redo_space_route", "register_user_service", "restart_space_server", "save_webpage", "search_app_catalog", "send_email_to_user", "send_sms_to_user", "service_doctor", "set_active_persona", "set_persona_scopes", "tool_docs", "transcribe_audio", "transcribe_video", "undo_space_route", "unpublish_site", "update_space_asset", "update_space_settings", "update_user_service", "update_user_settings", "use_app_gmail", "use_webpage", "view_webpage", "web_research", "web_search", "write_file", "write_space_route", "x_search"] as const;
+export const TOOL_NAMES = ["bash", "call_mcp_tool", "connect_integration", "connect_telegram", "copy_file", "create_agent", "create_automation", "create_persona", "create_rule", "create_website", "delete_agent", "delete_automation", "delete_persona", "delete_rule", "delete_space_asset", "delete_space_route", "delete_user_service", "edit_agent", "edit_automation", "edit_file", "edit_image", "edit_persona", "edit_rule", "edit_space_route", "find_similar_links", "generate_d2_diagram", "generate_image", "generate_speech", "generate_video", "get_automation", "get_space_errors", "get_space_route", "get_space_route_history", "get_space_settings", "grep_search", "image_search", "list_agents", "list_app_tools", "list_automations", "list_available_scopes", "list_directory", "list_personas", "list_rules", "list_space_assets", "list_space_routes", "list_user_services", "maps_search", "open_mcp_app", "open_webpage", "proxy_local_service", "publish_site", "read_file", "read_webpage", "redo_space_route", "register_user_service", "restart_space_server", "save_webpage", "search_app_catalog", "send_email_to_user", "send_sms_to_user", "service_doctor", "set_active_persona", "set_persona_scopes", "tool_docs", "transcribe_audio", "transcribe_video", "undo_space_route", "unpublish_site", "update_space_asset", "update_space_settings", "update_user_service", "update_user_settings", "use_app_gmail", "use_webpage", "view_webpage", "web_research", "web_search", "write_file", "write_space_route", "x_search"] as const;
 
 /**
  * Typed convenience methods for every tool Zo Computer exposes over MCP.
@@ -885,14 +879,6 @@ export class ZoComputerClient extends McpClientBase {
      */
     editFile(args: EditFileArgs): Promise<McpToolResult> {
         return this.callTool("edit_file", args);
-    }
-
-    /**
-     * Merge a large or fuzzy rewrite into a text file using a fast apply LLM.
-     * Docs: https://docs.zocomputer.com/tools/edit-file-llm.md
-     */
-    editFileLlm(args: EditFileLlmArgs): Promise<McpToolResult> {
-        return this.callTool("edit_file_llm", args);
     }
 
     /**

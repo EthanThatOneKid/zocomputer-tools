@@ -486,29 +486,6 @@
       }
     },
     {
-      "name": "edit_file_llm",
-      "description": "Merge a large or fuzzy rewrite into a text file using a fast apply LLM.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "code_edit": {
-            "type": "string"
-          },
-          "instructions": {
-            "type": "string"
-          },
-          "target_file": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "target_file",
-          "code_edit"
-        ],
-        "additionalProperties": false
-      }
-    },
-    {
       "name": "edit_image",
       "description": "Edit or combine workspace images with a compatible image model.",
       "inputSchema": {
