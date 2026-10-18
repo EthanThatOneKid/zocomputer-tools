@@ -20,7 +20,48 @@ const COMPILE_OPTIONS = {
  * `export interface WebSearchArgs { query: string; }`.
  */
 export function compileArgsInterface(schema: unknown, interfaceName: string): Promise<string> {
-  return compile((stripTitles(schema) ?? {}) as JSONSchema, interfaceName, COMPILE_OPTIONS);
+  return compile(inlineDefs(stripTitles(schema) ?? {}) as JSONSchema, interfaceName, COMPILE_OPTIONS);
+}
+
+// Zo's live MCP schemas can nest a `$defs` map inside a subschema while their
+// `$ref`s stay document-root-relative ("#/$defs/ReplaceBlock"). json-schema-ref-parser
+// rejects that with EMISSINGPOINTER, and json-schema-to-typescript would otherwise
+// emit a dangling type name for it. Inline every local `$ref` against the enclosing
+// `$defs` map and drop the maps, so each arg interface stays self-contained.
+function inlineDefs(schema: unknown): unknown {
+  const defs = new Map<string, unknown>();
+  const collect = (node: unknown): void => {
+    if (Array.isArray(node)) return node.forEach(collect);
+    if (!node || typeof node !== 'object') return;
+    for (const [key, value] of Object.entries(node as Record<string, unknown>)) {
+      if (key === '$defs' && value && typeof value === 'object' && !Array.isArray(value)) {
+        for (const [name, def] of Object.entries(value as Record<string, unknown>)) {
+          if (!defs.has(name)) defs.set(name, def);
+        }
+      }
+      collect(value);
+    }
+  };
+  collect(schema);
+
+  const walk = (node: unknown, seen: readonly string[]): unknown => {
+    if (Array.isArray(node)) return node.map((item) => walk(item, seen));
+    if (!node || typeof node !== 'object') return node;
+    const obj = node as Record<string, unknown>;
+    if (typeof obj.$ref === 'string') {
+      const name = obj.$ref.replace(/^#\/(?:\$defs|definitions)\//, '');
+      const target = defs.get(name);
+      if (target !== undefined && !seen.includes(name)) return walk(target, [...seen, name]);
+    }
+    const out: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(obj)) {
+      if (key === '$defs' || key === '$ref') continue;
+      out[key] = walk(value, seen);
+    }
+    return out;
+  };
+
+  return walk(schema, []);
 }
 
 // json-schema-to-typescript turns a nested schema's `title` into a named type
