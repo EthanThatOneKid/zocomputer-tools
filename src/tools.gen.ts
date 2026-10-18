@@ -118,9 +118,75 @@ export interface EditAutomationArgs {
 }
 
 export interface EditFileArgs {
-    operations: {
-        [k: string]: unknown;
-        }[];
+    operations: (
+        | {
+            /**
+             * Whether the search should be case-sensitive. Defaults to True.
+             */
+            case_sensitive?: boolean;
+            /**
+             * Which occurrence of search_block to target (1-indexed). Use 0 for all occurrences. Omit only when search_block appears exactly once.
+             */
+            occurrence?: number;
+            operation: "replace_block";
+            /**
+             * The text to replace the search_block with.
+             */
+            replace_block: string;
+            /**
+             * The exact, contiguous block of text to find.
+             */
+            search_block: string;
+          }
+        | {
+            /**
+             * An exact, contiguous block of text after which to insert.
+             */
+            after_block: string;
+            /**
+             * The text to insert.
+             */
+            insert_block: string;
+            /**
+             * Which occurrence of after_block to target (1-indexed). Omit only when after_block appears exactly once.
+             */
+            occurrence?: number;
+            operation: "insert_after";
+          }
+        | {
+            /**
+             * An exact, contiguous block of text before which to insert.
+             */
+            before_block: string;
+            /**
+             * The text to insert.
+             */
+            insert_block: string;
+            /**
+             * Which occurrence of before_block to target (1-indexed). Omit only when before_block appears exactly once.
+             */
+            occurrence?: number;
+            operation: "insert_before";
+          }
+        | {
+            /**
+             * The exact, contiguous block of text to delete.
+             */
+            delete_block: string;
+            /**
+             * Which occurrence of delete_block to target (1-indexed). Use 0 for all occurrences. Omit only when delete_block appears exactly once.
+             */
+            occurrence?: number;
+            operation: "delete_block";
+          }
+        | {
+            /**
+             * The line content to append to the end of the file. A newline will be added if not present.
+             */
+            line_content: string;
+            operation: "append_line";
+          }
+        )[];
     target_file: string;
 }
 
@@ -178,13 +244,77 @@ export interface EditRuleArgs {
 
 export interface EditSpaceRouteArgs {
     /**
-     * Partial edit — only the changed sections, with '// ... existing code ...' placeholders for unchanged parts. Merged against the current route code.
+     * Edit operations applied in order to the route's current code, same as edit_file: replace_block, insert_after, insert_before, delete_block, append_line. Each match block must appear exactly once unless the operation sets 'occurrence'.
      */
-    code_edit: string;
-    /**
-     * A sentence describing what the edit does, to help disambiguate. Leave empty to skip.
-     */
-    edit_instructions?: string;
+    operations: (
+        | {
+            /**
+             * Whether the search should be case-sensitive. Defaults to True.
+             */
+            case_sensitive?: boolean;
+            /**
+             * Which occurrence of search_block to target (1-indexed). Use 0 for all occurrences. Omit only when search_block appears exactly once.
+             */
+            occurrence?: number;
+            operation: "replace_block";
+            /**
+             * The text to replace the search_block with.
+             */
+            replace_block: string;
+            /**
+             * The exact, contiguous block of text to find.
+             */
+            search_block: string;
+          }
+        | {
+            /**
+             * An exact, contiguous block of text after which to insert.
+             */
+            after_block: string;
+            /**
+             * The text to insert.
+             */
+            insert_block: string;
+            /**
+             * Which occurrence of after_block to target (1-indexed). Omit only when after_block appears exactly once.
+             */
+            occurrence?: number;
+            operation: "insert_after";
+          }
+        | {
+            /**
+             * An exact, contiguous block of text before which to insert.
+             */
+            before_block: string;
+            /**
+             * The text to insert.
+             */
+            insert_block: string;
+            /**
+             * Which occurrence of before_block to target (1-indexed). Omit only when before_block appears exactly once.
+             */
+            occurrence?: number;
+            operation: "insert_before";
+          }
+        | {
+            /**
+             * The exact, contiguous block of text to delete.
+             */
+            delete_block: string;
+            /**
+             * Which occurrence of delete_block to target (1-indexed). Use 0 for all occurrences. Omit only when delete_block appears exactly once.
+             */
+            occurrence?: number;
+            operation: "delete_block";
+          }
+        | {
+            /**
+             * The line content to append to the end of the file. A newline will be added if not present.
+             */
+            line_content: string;
+            operation: "append_line";
+          }
+        )[];
     /**
      * Route path of the existing route to edit, e.g. '/about' or '/api/hello'.
      */
@@ -554,6 +684,15 @@ export interface UseAppGmailArgs {
     tool_name: string;
 }
 
+export interface UseIntegrationArgs {
+    app_slug: string;
+    configured_props: {
+        [k: string]: unknown;
+        };
+    email?: string;
+    tool_name: string;
+}
+
 export interface UseWebpageArgs {
     /**
      * Flat JSON-Schema-shaped grammar for a tool `output_schema` param.
@@ -652,7 +791,7 @@ export interface XSearchArgs {
     to_date?: string;
 }
 
-export const TOOL_NAMES = ["bash", "call_mcp_tool", "connect_integration", "connect_telegram", "copy_file", "create_agent", "create_automation", "create_persona", "create_rule", "create_website", "delete_agent", "delete_automation", "delete_persona", "delete_rule", "delete_space_asset", "delete_space_route", "delete_user_service", "edit_agent", "edit_automation", "edit_file", "edit_image", "edit_persona", "edit_rule", "edit_space_route", "find_similar_links", "generate_d2_diagram", "generate_image", "generate_speech", "generate_video", "get_automation", "get_space_errors", "get_space_route", "get_space_route_history", "get_space_settings", "grep_search", "image_search", "list_agents", "list_app_tools", "list_automations", "list_available_scopes", "list_directory", "list_personas", "list_rules", "list_space_assets", "list_space_routes", "list_user_services", "maps_search", "open_mcp_app", "open_webpage", "proxy_local_service", "publish_site", "read_file", "read_webpage", "redo_space_route", "register_user_service", "restart_space_server", "save_webpage", "search_app_catalog", "send_email_to_user", "send_sms_to_user", "service_doctor", "set_active_persona", "set_persona_scopes", "tool_docs", "transcribe_audio", "transcribe_video", "undo_space_route", "unpublish_site", "update_space_asset", "update_space_settings", "update_user_service", "update_user_settings", "use_app_gmail", "use_webpage", "view_webpage", "web_research", "web_search", "write_file", "write_space_route", "x_search"] as const;
+export const TOOL_NAMES = ["bash", "call_mcp_tool", "connect_integration", "connect_telegram", "copy_file", "create_agent", "create_automation", "create_persona", "create_rule", "create_website", "delete_agent", "delete_automation", "delete_persona", "delete_rule", "delete_space_asset", "delete_space_route", "delete_user_service", "edit_agent", "edit_automation", "edit_file", "edit_image", "edit_persona", "edit_rule", "edit_space_route", "find_similar_links", "generate_d2_diagram", "generate_image", "generate_speech", "generate_video", "get_automation", "get_space_errors", "get_space_route", "get_space_route_history", "get_space_settings", "grep_search", "image_search", "list_agents", "list_app_tools", "list_automations", "list_available_scopes", "list_directory", "list_personas", "list_rules", "list_space_assets", "list_space_routes", "list_user_services", "maps_search", "open_mcp_app", "open_webpage", "proxy_local_service", "publish_site", "read_file", "read_webpage", "redo_space_route", "register_user_service", "restart_space_server", "save_webpage", "search_app_catalog", "send_email_to_user", "send_sms_to_user", "service_doctor", "set_active_persona", "set_persona_scopes", "tool_docs", "transcribe_audio", "transcribe_video", "undo_space_route", "unpublish_site", "update_space_asset", "update_space_settings", "update_user_service", "update_user_settings", "use_app_gmail", "use_integration", "use_webpage", "view_webpage", "web_research", "web_search", "write_file", "write_space_route", "x_search"] as const;
 
 /**
  * Typed convenience methods for every tool Zo Computer exposes over MCP.
@@ -874,7 +1013,13 @@ export class ZoComputerClient extends McpClientBase {
     }
 
     /**
-     * Edit a text file using a sequence of precise edit operations.
+     * Edit a file with operations applied in order. Each item requires `operation` and its fields.
+     *
+     * Examples: `{"operation":"replace_block","search_block":"old","replace_block":"new"}`;
+     * `{"operation":"insert_after","after_block":"anchor","insert_block":"new"}`;
+     * `{"operation":"insert_before","before_block":"anchor","insert_block":"new"}`;
+     * `{"operation":"delete_block","delete_block":"old"}`;
+     * `{"operation":"append_line","line_content":"new"}`.
      * Docs: https://docs.zocomputer.com/tools/edit-file.md
      */
     editFile(args: EditFileArgs): Promise<McpToolResult> {
@@ -919,11 +1064,17 @@ export class ZoComputerClient extends McpClientBase {
     }
 
     /**
-     * Edit an existing route's code by supplying only the changed sections.
+     * Edit an existing route's code with exact edit operations, the same ones edit_file uses.
      *
-     * Preferred for edits to existing routes: sends only the changed sections with
-     * `// ... existing code ...` placeholders for unchanged regions, merged against
-     * the current route code.
+     * Preferred for edits to existing routes: send only the operations for the changed
+     * sections, matched exactly against the current route code. Each item requires
+     * `operation` and its fields.
+     *
+     * Examples: `{"operation":"replace_block","search_block":"old","replace_block":"new"}`;
+     * `{"operation":"insert_after","after_block":"anchor","insert_block":"new"}`;
+     * `{"operation":"insert_before","before_block":"anchor","insert_block":"new"}`;
+     * `{"operation":"delete_block","delete_block":"old"}`;
+     * `{"operation":"append_line","line_content":"new"}`.
      * Docs: https://docs.zocomputer.com/tools/edit-space-route.md
      */
     editSpaceRoute(args: EditSpaceRouteArgs): Promise<McpToolResult> {
@@ -1436,6 +1587,29 @@ export class ZoComputerClient extends McpClientBase {
     }
 
     /**
+     * Run an action on a connected Pipedream catalog app.
+     *
+     * For long-tail integrations that do NOT have a dedicated ``use_app_*`` tool.
+     * When a dedicated tool exists for the app, use that instead — it has
+     * app-specific handling this generic tool does not.
+     *
+     * Catalog apps are beyond Zo's verified set; Zo has not tested them, so
+     * reliability varies. Workflow:
+     *
+     *   1. ``search_app_catalog(query)`` — find the app and its ``app_slug``.
+     *   2. ``connect_integration(app_slug)`` — if it isn't connected yet.
+     *   3. ``list_app_tools(app_slug)`` — get the action names + parameters.
+     *   4. ``use_integration(app_slug, tool_name, configured_props={...})``.
+     *
+     * Pass action parameters as keys in ``configured_props``. The app-auth prop
+     * is injected automatically — do not include it.
+     * Docs: https://docs.zocomputer.com/tools/use-integration.md
+     */
+    useIntegration(args: UseIntegrationArgs): Promise<McpToolResult> {
+        return this.callTool("use_integration", args);
+    }
+
+    /**
      * Interact with the current page using an AI agent.
      * Docs: https://docs.zocomputer.com/tools/use-webpage.md
      */
@@ -1480,7 +1654,7 @@ export class ZoComputerClient extends McpClientBase {
      *
      * See <capabilities> for architecture details, examples, and styling guidance.
      *
-     * IMPORTANT: For edits to an existing route, use `edit_space_route` instead — it sends only the changed sections and avoids re-transmitting the whole file. Only use `write_space_route` when creating a new route or intentionally replacing all of the existing code.
+     * IMPORTANT: For edits to an existing route, use `edit_space_route` instead — it applies exact edit operations and avoids re-transmitting the whole file. Only use `write_space_route` when creating a new route or intentionally replacing all of the existing code.
      * Docs: https://docs.zocomputer.com/tools/write-space-route.md
      */
     writeSpaceRoute(args: WriteSpaceRouteArgs): Promise<McpToolResult> {

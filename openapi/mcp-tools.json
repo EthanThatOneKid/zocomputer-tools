@@ -463,15 +463,199 @@
     },
     {
       "name": "edit_file",
-      "description": "Edit a text file using a sequence of precise edit operations.",
+      "description": "Edit a file with operations applied in order. Each item requires `operation` and its fields.\n\nExamples: `{\"operation\":\"replace_block\",\"search_block\":\"old\",\"replace_block\":\"new\"}`;\n`{\"operation\":\"insert_after\",\"after_block\":\"anchor\",\"insert_block\":\"new\"}`;\n`{\"operation\":\"insert_before\",\"before_block\":\"anchor\",\"insert_block\":\"new\"}`;\n`{\"operation\":\"delete_block\",\"delete_block\":\"old\"}`;\n`{\"operation\":\"append_line\",\"line_content\":\"new\"}`.",
       "inputSchema": {
         "type": "object",
         "properties": {
           "operations": {
             "type": "array",
             "items": {
-              "type": "object",
-              "additionalProperties": true
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/ReplaceBlock"
+                },
+                {
+                  "$ref": "#/$defs/InsertAfter"
+                },
+                {
+                  "$ref": "#/$defs/InsertBefore"
+                },
+                {
+                  "$ref": "#/$defs/DeleteBlock"
+                },
+                {
+                  "$ref": "#/$defs/AppendLine"
+                }
+              ],
+              "discriminator": {
+                "mapping": {
+                  "append_line": "#/$defs/AppendLine",
+                  "delete_block": "#/$defs/DeleteBlock",
+                  "insert_after": "#/$defs/InsertAfter",
+                  "insert_before": "#/$defs/InsertBefore",
+                  "replace_block": "#/$defs/ReplaceBlock"
+                },
+                "propertyName": "operation"
+              }
+            },
+            "$defs": {
+              "AppendLine": {
+                "type": "object",
+                "properties": {
+                  "line_content": {
+                    "type": "string",
+                    "description": "The line content to append to the end of the file. A newline will be added if not present.",
+                    "title": "Line Content"
+                  },
+                  "operation": {
+                    "type": "string",
+                    "const": "append_line",
+                    "title": "Operation"
+                  }
+                },
+                "required": [
+                  "operation",
+                  "line_content"
+                ],
+                "additionalProperties": false,
+                "title": "AppendLine"
+              },
+              "DeleteBlock": {
+                "type": "object",
+                "properties": {
+                  "delete_block": {
+                    "type": "string",
+                    "description": "The exact, contiguous block of text to delete.",
+                    "title": "Delete Block"
+                  },
+                  "occurrence": {
+                    "type": "integer",
+                    "description": "Which occurrence of delete_block to target (1-indexed). Use 0 for all occurrences. Omit only when delete_block appears exactly once.",
+                    "default": 1,
+                    "minimum": 0,
+                    "title": "Occurrence"
+                  },
+                  "operation": {
+                    "type": "string",
+                    "const": "delete_block",
+                    "title": "Operation"
+                  }
+                },
+                "required": [
+                  "operation",
+                  "delete_block"
+                ],
+                "additionalProperties": false,
+                "title": "DeleteBlock"
+              },
+              "InsertAfter": {
+                "type": "object",
+                "properties": {
+                  "after_block": {
+                    "type": "string",
+                    "description": "An exact, contiguous block of text after which to insert.",
+                    "title": "After Block"
+                  },
+                  "insert_block": {
+                    "type": "string",
+                    "description": "The text to insert.",
+                    "title": "Insert Block"
+                  },
+                  "occurrence": {
+                    "type": "integer",
+                    "description": "Which occurrence of after_block to target (1-indexed). Omit only when after_block appears exactly once.",
+                    "default": 1,
+                    "minimum": 1,
+                    "title": "Occurrence"
+                  },
+                  "operation": {
+                    "type": "string",
+                    "const": "insert_after",
+                    "title": "Operation"
+                  }
+                },
+                "required": [
+                  "operation",
+                  "after_block",
+                  "insert_block"
+                ],
+                "additionalProperties": false,
+                "title": "InsertAfter"
+              },
+              "InsertBefore": {
+                "type": "object",
+                "properties": {
+                  "before_block": {
+                    "type": "string",
+                    "description": "An exact, contiguous block of text before which to insert.",
+                    "title": "Before Block"
+                  },
+                  "insert_block": {
+                    "type": "string",
+                    "description": "The text to insert.",
+                    "title": "Insert Block"
+                  },
+                  "occurrence": {
+                    "type": "integer",
+                    "description": "Which occurrence of before_block to target (1-indexed). Omit only when before_block appears exactly once.",
+                    "default": 1,
+                    "minimum": 1,
+                    "title": "Occurrence"
+                  },
+                  "operation": {
+                    "type": "string",
+                    "const": "insert_before",
+                    "title": "Operation"
+                  }
+                },
+                "required": [
+                  "operation",
+                  "before_block",
+                  "insert_block"
+                ],
+                "additionalProperties": false,
+                "title": "InsertBefore"
+              },
+              "ReplaceBlock": {
+                "type": "object",
+                "properties": {
+                  "case_sensitive": {
+                    "type": "boolean",
+                    "description": "Whether the search should be case-sensitive. Defaults to True.",
+                    "default": true,
+                    "title": "Case Sensitive"
+                  },
+                  "occurrence": {
+                    "type": "integer",
+                    "description": "Which occurrence of search_block to target (1-indexed). Use 0 for all occurrences. Omit only when search_block appears exactly once.",
+                    "default": 1,
+                    "minimum": 0,
+                    "title": "Occurrence"
+                  },
+                  "operation": {
+                    "type": "string",
+                    "const": "replace_block",
+                    "title": "Operation"
+                  },
+                  "replace_block": {
+                    "type": "string",
+                    "description": "The text to replace the search_block with.",
+                    "title": "Replace Block"
+                  },
+                  "search_block": {
+                    "type": "string",
+                    "description": "The exact, contiguous block of text to find.",
+                    "title": "Search Block"
+                  }
+                },
+                "required": [
+                  "operation",
+                  "search_block",
+                  "replace_block"
+                ],
+                "additionalProperties": false,
+                "title": "ReplaceBlock"
+              }
             }
           },
           "target_file": {
@@ -640,17 +824,201 @@
     },
     {
       "name": "edit_space_route",
-      "description": "Edit an existing route's code by supplying only the changed sections.\n\nPreferred for edits to existing routes: sends only the changed sections with\n`// ... existing code ...` placeholders for unchanged regions, merged against\nthe current route code.",
+      "description": "Edit an existing route's code with exact edit operations, the same ones edit_file uses.\n\nPreferred for edits to existing routes: send only the operations for the changed\nsections, matched exactly against the current route code. Each item requires\n`operation` and its fields.\n\nExamples: `{\"operation\":\"replace_block\",\"search_block\":\"old\",\"replace_block\":\"new\"}`;\n`{\"operation\":\"insert_after\",\"after_block\":\"anchor\",\"insert_block\":\"new\"}`;\n`{\"operation\":\"insert_before\",\"before_block\":\"anchor\",\"insert_block\":\"new\"}`;\n`{\"operation\":\"delete_block\",\"delete_block\":\"old\"}`;\n`{\"operation\":\"append_line\",\"line_content\":\"new\"}`.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "code_edit": {
-            "type": "string",
-            "description": "Partial edit — only the changed sections, with '// ... existing code ...' placeholders for unchanged parts. Merged against the current route code."
-          },
-          "edit_instructions": {
-            "type": "string",
-            "description": "A sentence describing what the edit does, to help disambiguate. Leave empty to skip."
+          "operations": {
+            "type": "array",
+            "description": "Edit operations applied in order to the route's current code, same as edit_file: replace_block, insert_after, insert_before, delete_block, append_line. Each match block must appear exactly once unless the operation sets 'occurrence'.",
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/ReplaceBlock"
+                },
+                {
+                  "$ref": "#/$defs/InsertAfter"
+                },
+                {
+                  "$ref": "#/$defs/InsertBefore"
+                },
+                {
+                  "$ref": "#/$defs/DeleteBlock"
+                },
+                {
+                  "$ref": "#/$defs/AppendLine"
+                }
+              ],
+              "discriminator": {
+                "mapping": {
+                  "append_line": "#/$defs/AppendLine",
+                  "delete_block": "#/$defs/DeleteBlock",
+                  "insert_after": "#/$defs/InsertAfter",
+                  "insert_before": "#/$defs/InsertBefore",
+                  "replace_block": "#/$defs/ReplaceBlock"
+                },
+                "propertyName": "operation"
+              }
+            },
+            "$defs": {
+              "AppendLine": {
+                "type": "object",
+                "properties": {
+                  "line_content": {
+                    "type": "string",
+                    "description": "The line content to append to the end of the file. A newline will be added if not present.",
+                    "title": "Line Content"
+                  },
+                  "operation": {
+                    "type": "string",
+                    "const": "append_line",
+                    "title": "Operation"
+                  }
+                },
+                "required": [
+                  "operation",
+                  "line_content"
+                ],
+                "additionalProperties": false,
+                "title": "AppendLine"
+              },
+              "DeleteBlock": {
+                "type": "object",
+                "properties": {
+                  "delete_block": {
+                    "type": "string",
+                    "description": "The exact, contiguous block of text to delete.",
+                    "title": "Delete Block"
+                  },
+                  "occurrence": {
+                    "type": "integer",
+                    "description": "Which occurrence of delete_block to target (1-indexed). Use 0 for all occurrences. Omit only when delete_block appears exactly once.",
+                    "default": 1,
+                    "minimum": 0,
+                    "title": "Occurrence"
+                  },
+                  "operation": {
+                    "type": "string",
+                    "const": "delete_block",
+                    "title": "Operation"
+                  }
+                },
+                "required": [
+                  "operation",
+                  "delete_block"
+                ],
+                "additionalProperties": false,
+                "title": "DeleteBlock"
+              },
+              "InsertAfter": {
+                "type": "object",
+                "properties": {
+                  "after_block": {
+                    "type": "string",
+                    "description": "An exact, contiguous block of text after which to insert.",
+                    "title": "After Block"
+                  },
+                  "insert_block": {
+                    "type": "string",
+                    "description": "The text to insert.",
+                    "title": "Insert Block"
+                  },
+                  "occurrence": {
+                    "type": "integer",
+                    "description": "Which occurrence of after_block to target (1-indexed). Omit only when after_block appears exactly once.",
+                    "default": 1,
+                    "minimum": 1,
+                    "title": "Occurrence"
+                  },
+                  "operation": {
+                    "type": "string",
+                    "const": "insert_after",
+                    "title": "Operation"
+                  }
+                },
+                "required": [
+                  "operation",
+                  "after_block",
+                  "insert_block"
+                ],
+                "additionalProperties": false,
+                "title": "InsertAfter"
+              },
+              "InsertBefore": {
+                "type": "object",
+                "properties": {
+                  "before_block": {
+                    "type": "string",
+                    "description": "An exact, contiguous block of text before which to insert.",
+                    "title": "Before Block"
+                  },
+                  "insert_block": {
+                    "type": "string",
+                    "description": "The text to insert.",
+                    "title": "Insert Block"
+                  },
+                  "occurrence": {
+                    "type": "integer",
+                    "description": "Which occurrence of before_block to target (1-indexed). Omit only when before_block appears exactly once.",
+                    "default": 1,
+                    "minimum": 1,
+                    "title": "Occurrence"
+                  },
+                  "operation": {
+                    "type": "string",
+                    "const": "insert_before",
+                    "title": "Operation"
+                  }
+                },
+                "required": [
+                  "operation",
+                  "before_block",
+                  "insert_block"
+                ],
+                "additionalProperties": false,
+                "title": "InsertBefore"
+              },
+              "ReplaceBlock": {
+                "type": "object",
+                "properties": {
+                  "case_sensitive": {
+                    "type": "boolean",
+                    "description": "Whether the search should be case-sensitive. Defaults to True.",
+                    "default": true,
+                    "title": "Case Sensitive"
+                  },
+                  "occurrence": {
+                    "type": "integer",
+                    "description": "Which occurrence of search_block to target (1-indexed). Use 0 for all occurrences. Omit only when search_block appears exactly once.",
+                    "default": 1,
+                    "minimum": 0,
+                    "title": "Occurrence"
+                  },
+                  "operation": {
+                    "type": "string",
+                    "const": "replace_block",
+                    "title": "Operation"
+                  },
+                  "replace_block": {
+                    "type": "string",
+                    "description": "The text to replace the search_block with.",
+                    "title": "Replace Block"
+                  },
+                  "search_block": {
+                    "type": "string",
+                    "description": "The exact, contiguous block of text to find.",
+                    "title": "Search Block"
+                  }
+                },
+                "required": [
+                  "operation",
+                  "search_block",
+                  "replace_block"
+                ],
+                "additionalProperties": false,
+                "title": "ReplaceBlock"
+              }
+            }
           },
           "path": {
             "type": "string",
@@ -663,7 +1031,7 @@
         },
         "required": [
           "path",
-          "code_edit"
+          "operations"
         ],
         "additionalProperties": false
       }
@@ -1812,6 +2180,34 @@
       }
     },
     {
+      "name": "use_integration",
+      "description": "Run an action on a connected Pipedream catalog app.\n\nFor long-tail integrations that do NOT have a dedicated ``use_app_*`` tool.\nWhen a dedicated tool exists for the app, use that instead — it has\napp-specific handling this generic tool does not.\n\nCatalog apps are beyond Zo's verified set; Zo has not tested them, so\nreliability varies. Workflow:\n\n  1. ``search_app_catalog(query)`` — find the app and its ``app_slug``.\n  2. ``connect_integration(app_slug)`` — if it isn't connected yet.\n  3. ``list_app_tools(app_slug)`` — get the action names + parameters.\n  4. ``use_integration(app_slug, tool_name, configured_props={...})``.\n\nPass action parameters as keys in ``configured_props``. The app-auth prop\nis injected automatically — do not include it.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "app_slug": {
+            "type": "string"
+          },
+          "configured_props": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "email": {
+            "type": "string"
+          },
+          "tool_name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "app_slug",
+          "tool_name",
+          "configured_props"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
       "name": "use_webpage",
       "description": "Interact with the current page using an AI agent.",
       "inputSchema": {
@@ -2161,7 +2557,7 @@
     },
     {
       "name": "write_space_route",
-      "description": "Create a new route or fully rewrite an existing one in the user's zo.space site.\n\nSee <capabilities> for architecture details, examples, and styling guidance.\n\nIMPORTANT: For edits to an existing route, use `edit_space_route` instead — it sends only the changed sections and avoids re-transmitting the whole file. Only use `write_space_route` when creating a new route or intentionally replacing all of the existing code.",
+      "description": "Create a new route or fully rewrite an existing one in the user's zo.space site.\n\nSee <capabilities> for architecture details, examples, and styling guidance.\n\nIMPORTANT: For edits to an existing route, use `edit_space_route` instead — it applies exact edit operations and avoids re-transmitting the whole file. Only use `write_space_route` when creating a new route or intentionally replacing all of the existing code.",
       "inputSchema": {
         "type": "object",
         "properties": {
