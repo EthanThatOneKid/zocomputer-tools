@@ -319,9 +319,6 @@ export interface EditSpaceRouteArgs {
      * Route path of the existing route to edit, e.g. '/about' or '/api/hello'.
      */
     path: string;
-    /**
-     * 'true' or 'false'. Optional visibility override for page routes. Leave empty to preserve current visibility. API routes are always public.
-     */
     public?: string;
 }
 
@@ -767,9 +764,6 @@ export interface WriteSpaceRouteArgs {
      * Route path starting with '/'. Use '/' for custom home page. Any path works for either route type.
      */
     path: string;
-    /**
-     * 'true' or 'false'. Whether the route is publicly accessible. API routes are always public (this param is ignored). For pages, leave empty to preserve current visibility on updates; defaults to false for new non-homepage pages and true for the homepage (/).
-     */
     public?: string;
     /**
      * Either 'api' or 'page'.

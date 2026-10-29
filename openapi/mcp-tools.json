@@ -1025,8 +1025,7 @@
             "description": "Route path of the existing route to edit, e.g. '/about' or '/api/hello'."
           },
           "public": {
-            "type": "string",
-            "description": "'true' or 'false'. Optional visibility override for page routes. Leave empty to preserve current visibility. API routes are always public."
+            "type": "string"
           }
         },
         "required": [
@@ -2570,8 +2569,7 @@
             "description": "Route path starting with '/'. Use '/' for custom home page. Any path works for either route type."
           },
           "public": {
-            "type": "string",
-            "description": "'true' or 'false'. Whether the route is publicly accessible. API routes are always public (this param is ignored). For pages, leave empty to preserve current visibility on updates; defaults to false for new non-homepage pages and true for the homepage (/)."
+            "type": "string"
           },
           "route_type": {
             "type": "string",
