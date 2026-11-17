@@ -2179,6 +2179,30 @@
       }
     },
     {
+      "name": "use_app_google_calendar",
+      "description": "Work with the user's connected Google Calendar account.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "configured_props": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "email": {
+            "type": "string"
+          },
+          "tool_name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "tool_name",
+          "configured_props"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
       "name": "use_integration",
       "description": "Run an action on a connected Pipedream catalog app.\n\nFor long-tail integrations that do NOT have a dedicated ``use_app_*`` tool.\nWhen a dedicated tool exists for the app, use that instead — it has\napp-specific handling this generic tool does not.\n\nCatalog apps are beyond Zo's verified set; Zo has not tested them, so\nreliability varies. Workflow:\n\n  1. ``search_app_catalog(query)`` — find the app and its ``app_slug``.\n  2. ``connect_integration(app_slug)`` — if it isn't connected yet.\n  3. ``list_app_tools(app_slug)`` — get the action names + parameters.\n  4. ``use_integration(app_slug, tool_name, configured_props={...})``.\n\nPass action parameters as keys in ``configured_props``. The app-auth prop\nis injected automatically — do not include it.",
       "inputSchema": {
